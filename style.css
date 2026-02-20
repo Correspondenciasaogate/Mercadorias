@@ -22,6 +22,16 @@ header {
 .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border: 1px solid #d1fae5; }
 h2 { margin-top: 0; font-size: 1.2rem; color: #065f46; border-bottom: 2px solid #ecfdf5; padding-bottom: 8px; margin-bottom: 15px; }
 
+/* NOVA GRID DE PRÉVIA NOS DETALHES */
+.grid-previa { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.mini-card { 
+    background: #f0fdf4; border: 1px solid #a7f3d0; padding: 10px; border-radius: 8px; 
+    cursor: pointer; text-align: center; transition: all 0.2s;
+}
+.mini-card:hover { background: #d1fae5; transform: translateY(-2px); border-color: var(--cor-primaria); }
+.mini-card strong { display: block; color: var(--cor-primaria); }
+.mini-card span { font-size: 12px; color: #64748b; }
+
 #dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
 .card { background: white; padding: 15px; border-radius: 8px; text-align: center; border-bottom: 4px solid var(--cor-primaria); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .card h3 { margin: 0; font-size: 0.8rem; color: #6b7280; text-transform: uppercase; }
