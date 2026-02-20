@@ -427,7 +427,6 @@ document.getElementById('formRecebimento').addEventListener('submit', function(e
     document.getElementById('telefone').style.backgroundColor = "";
 });
 
-// APLICA FILTROS E ATUALIZA A SEÇÃO DE DETALHES COM RESULTADOS
 function aplicarFiltros() {
     const fData = document.getElementById('filtroData').value; 
     const fSala = document.getElementById('filtroSala').value.toLowerCase();
@@ -437,23 +436,27 @@ function aplicarFiltros() {
 
     const filtrados = encomendas.filter(e => {
         const dt = e.data.split('/').reverse().join('-');
-        return (fData === "" || dt === fData) &&
-               (fSala === "" || e.sala.toLowerCase().includes(fSala)) &&
-               (fNome === "" || e.destinatario.toLowerCase().includes(fNome)) &&
-               (fNF === "" || e.nf.toLowerCase().includes(fNF)) &&
-               (fStatus === "" || e.status === fStatus);
+        const bateData = fData === "" || dt === fData;
+        const bateSala = fSala === "" || e.sala.toLowerCase().includes(fSala);
+        const bateNome = fNome === "" || e.destinatario.toLowerCase().includes(fNome);
+        const bateNF = fNF === "" || e.nf.toLowerCase().includes(fNF);
+        const bateStatus = fStatus === "" || e.status === fStatus;
+
+        return bateData && bateSala && bateNome && bateNF && bateStatus;
     });
 
     renderizarTabela(filtrados);
 
-    // SE HOUVER FILTRO ATIVO, MOSTRA MINI CARDS NA SEÇÃO DE DETALHES
     const detalhesDiv = document.getElementById('resultadoConteudo');
+    
     if(fSala || fNome || fNF || fData || fStatus) {
         if(filtrados.length > 0) {
             let html = `<div class="grid-previa">`;
-            filtrados.slice(0, 6).forEach(item => { // Mostra os 6 primeiros
+            // REMOVIDO O .slice(0, 6) PARA MOSTRAR TODOS
+            filtrados.forEach(item => {
+                const corStatus = item.status === 'Retirado' ? '#e2e8f0' : '#d1fae5';
                 html += `
-                    <div class="mini-card" onclick="selecionarUnica(${item.id})">
+                    <div class="mini-card" onclick="selecionarUnica(${item.id})" style="background: ${corStatus}">
                         <strong>Sala ${item.sala}</strong>
                         <span>${item.destinatario.split(' ')[0]}</span>
                         <small>${item.status === 'Retirado' ? '✅' : '📦'}</small>
