@@ -472,9 +472,25 @@ function aplicarFiltros() {
 function renderizarTabela(dados = encomendas) {
     const corpo = document.getElementById('listaCorpo');
     corpo.innerHTML = '';
-    const ordenados = [...dados].sort((a, b) => b.id - a.id);
+
+    // --- TRECHO DA NOVA ORDENAÇÃO ---
+    const ordenados = [...dados].sort((a, b) => {
+        // 1. Ordena por Data (mais recente primeiro)
+        const dataA = a.data.split('/').reverse().join('');
+        const dataB = b.data.split('/').reverse().join('');
+        if (dataA !== dataB) return dataB.localeCompare(dataA);
+
+        // 2. Ordena por Torre (Gate primeiro, Way depois)
+        if (a.torre !== b.torre) return a.torre.localeCompare(b.torre);
+
+        // 3. Ordena por Sala (Crescente)
+        // Usamos o replace(/\D/g, '') para garantir que trate como número se houver letras
+        return parseInt(a.sala.replace(/\D/g, '')) - parseInt(b.sala.replace(/\D/g, ''));
+    });
+    // --------------------------------
 
     ordenados.forEach(item => {
+        // ... resto do código (o tr.onclick e o innerHTML continuam iguais)
         const tr = document.createElement('tr');
         tr.onclick = () => selecionarUnica(item.id);
         tr.innerHTML = `
