@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Encomendas</title>
+    <title>Controle de Encomendas - Gate</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
@@ -13,28 +13,12 @@
     <h1 id="tituloPrincipal">Controle de Encomendas - Gate</h1>
 </header>
 
-<main>
-    <div class="coluna-principal">
-        <section id="dashboard">
-            <div class="card">
-                <h3>Recebidos Hoje</h3>
-                <span id="dashTotal">0</span>
-            </div>
-            <div class="card aguardando">
-                <h3>Aguardando</h3>
-                <span id="dashAguardando">0</span>
-            </div>
-            <div class="card retirados">
-                <h3>Retirados</h3>
-                <span id="dashRetirados">0</span>
-            </div>
-        </section>
-
+<main class="layout-vertical">
+    <div class="grid-topo">
         <section class="container">
             <h2 id="tituloForm">📦 Novo Recebimento</h2>
             <form id="formRecebimento">
                 <input type="hidden" id="editId">
-                
                 <div class="campo-grupo">
                     <div class="campo-com-botao" style="flex: 2;">
                         <input type="text" id="notaFiscal" placeholder="Nota Fiscal ou Código" required>
@@ -45,21 +29,15 @@
                         <option value="Way">Torre Way</option>
                     </select>
                 </div>
-
                 <div id="area-scanner">
                     <div id="reader"></div>
                     <button type="button" class="btn-fechar-camera" onclick="pararLeitor()">Fechar Câmera</button>
                 </div>
-
                 <div class="campo-grupo">
                     <input type="text" id="sala" placeholder="Apto/Sala" required>
                     <input type="text" id="destinatario" placeholder="Nome do Destinatário" required>
                 </div>
-
-                <div class="campo-grupo">
-                    <input type="text" id="telefone" placeholder="WhatsApp (Preenchimento automático)" readonly>
-                </div>
-
+                <input type="text" id="telefone" placeholder="WhatsApp (Automático)" readonly style="margin-bottom:12px;">
                 <div style="display: flex; gap: 10px;">
                     <button type="submit" id="btnSalvar" class="btn-principal">Salvar e Avisar Morador</button>
                     <button type="button" id="btnCancelarEdit" class="btn-secundario" style="display:none;" onclick="cancelarEdicao()">Cancelar</button>
@@ -69,9 +47,9 @@
 
         <section class="container">
             <h2>🔍 Pesquisar Encomendas</h2>
-            <div class="filtros-grid">
+            <div class="filtros-grid-ajustado">
                 <input type="date" id="filtroData" onchange="aplicarFiltros()">
-                <input type="text" id="filtroSala" placeholder="Filtrar Sala" oninput="aplicarFiltros()">
+                <input type="text" id="filtroSala" placeholder="Sala" oninput="aplicarFiltros()">
                 <input type="text" id="filtroNome" placeholder="Nome" oninput="aplicarFiltros()">
                 <input type="text" id="filtroNF" placeholder="Nota Fiscal" oninput="aplicarFiltros()">
                 <select id="filtroStatus" onchange="aplicarFiltros()">
@@ -80,51 +58,70 @@
                     <option value="Retirado">Retirado</option>
                 </select>
             </div>
-            <div style="margin-top: 10px; display: flex; gap: 10px;">
-                <button onclick="visualizarTudo()" class="btn-secundario">Limpar Filtros</button>
-                <button onclick="exportarCSV()" class="btn-secundario" style="background: #15803d;">Exportar Excel (CSV)</button>
-            </div>
-
-            <div class="table-responsive" style="margin-top: 20px;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>NF</th>
-                            <th>Sala</th>
-                            <th>Torre</th>
-                            <th>Destinatário</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaCorpo"></tbody>
-                </table>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <button onclick="visualizarTudo()" class="btn-secundario" style="flex:1">Limpar Filtros</button>
+                <button onclick="exportarCSV()" class="btn-secundario" style="background: #065f46; flex:1">Exportar CSV</button>
             </div>
         </section>
     </div>
 
-    <aside class="lateral-acoes">
-        <div class="container" style="position: sticky; top: 20px;">
-            <h2>📝 Detalhes da Entrega</h2>
-            <div id="resultadoConteudo">
-                <p class="placeholder-text">Selecione uma encomenda na tabela para processar a retirada.</p>
-            </div>
-
-            <div id="blocoConfirmarRetirada" style="display: none; border-top: 2px solid #eee; margin-top: 15px; padding-top: 15px;">
-                <label><strong>Quem está retirando?</strong></label>
-                <input type="text" id="nomeRec" placeholder="Nome do Morador/Portador" style="margin-bottom: 10px;">
-                
-                <label><strong>Assinatura Digital:</strong></label>
-                <canvas id="canvasAssinatura" width="400" height="200"></canvas>
-                
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="limparAssinatura()" class="btn-secundario" style="flex: 1;">Limpar</button>
-                    <button onclick="finalizarEntrega()" class="btn-principal" style="flex: 2; background: #15803d;">Confirmar Retirada</button>
+    <section class="container" id="secao-detalhes">
+        <h2>📝 Detalhes da Entrega</h2>
+        <div id="resultadoConteudo">
+            <p class="placeholder-text">Selecione uma encomenda na lista abaixo para processar a retirada.</p>
+        </div>
+        <div id="blocoConfirmarRetirada" style="display: none; border-top: 2px solid #eee; margin-top: 15px; padding-top: 15px;">
+            <div class="grid-assinatura">
+                <div style="flex: 1;">
+                    <label><strong>Quem está retirando?</strong></label>
+                    <input type="text" id="nomeRec" placeholder="Nome do Morador/Portador" style="margin: 10px 0;">
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="limparAssinatura()" class="btn-secundario" style="flex: 1;">Limpar</button>
+                        <button onclick="finalizarEntrega()" class="btn-principal" style="flex: 2; background: #059669;">Confirmar Retirada</button>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <label><strong>Assinatura Digital:</strong></label>
+                    <canvas id="canvasAssinatura" width="400" height="180"></canvas>
                 </div>
             </div>
         </div>
-    </aside>
+    </section>
+
+    <section id="dashboard">
+        <div class="card">
+            <h3>Recebidos Hoje</h3>
+            <span id="dashTotal">0</span>
+        </div>
+        <div class="card aguardando">
+            <h3>Aguardando</h3>
+            <span id="dashAguardando">0</span>
+        </div>
+        <div class="card retirados">
+            <h3>Retirados</h3>
+            <span id="dashRetirados">0</span>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2>📋 Lista Geral de Encomendas</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>NF</th>
+                        <th>Sala</th>
+                        <th>Torre</th>
+                        <th>Destinatário</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="listaCorpo"></tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
 <button id="btnTopo" onclick="voltarAoTopo()" title="Voltar ao Topo">↑</button>
