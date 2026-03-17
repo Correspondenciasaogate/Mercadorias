@@ -63,9 +63,29 @@
                 <button onclick="exportarCSV()" class="btn-secundario" style="background: #065f46; flex:1">Exportar CSV</button>
             </div>
         </section>
-    </div>
+        
+        <section class="container" style="margin-top: 20px; border-top: 3px solid #059669;">
+    <h2 style="color: #333; margin-bottom: 15px;">🛠️ Relatório e Limpeza</h2>
+    
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <label style="font-weight: bold; white-space: nowrap;">Data para baixar/apagar:</label>
+            <input type="date" id="dataParaLimpar" style="margin-bottom: 0; flex-grow: 1;">
+        </div>
 
-    <section class="container" id="secao-detalhes">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button onclick="gerarRelatorioAssinaturas()" style="padding: 15px; background-color: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                🖨️ 1º Ver/Printar Assinaturas
+            </button>
+            
+            <button onclick="limparPorData()" style="padding: 15px; background-color: #dc2626; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                🗑️ 2º Apagar Registros do Dia
+            </button>
+        </div>
+        <p style="font-size: 11px; color: #666; margin: 0;">* O botão apagar removerá apenas os itens "Retirados" da data selecionada.</p>
+    </div>
+    </section>
+        <section class="container" id="secao-detalhes">
         <h2>📝 Detalhes da Entrega</h2>
         <div id="resultadoConteudo">
             <p class="placeholder-text">Use os filtros acima para buscar ou selecione na lista.</p>
