@@ -70,3 +70,47 @@ tr:hover { background: #f9fafb; }
     .grid-topo, .grid-assinatura { grid-template-columns: 1fr; flex-direction: column; }
     #dashboard { grid-template-columns: 1fr; }
 }
+/* AJUSTES PARA CELULAR (RESPONSIVIDADE) */
+input[type="text"], 
+input[type="date"], 
+select, 
+button {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+}
+
+.campo-grupo {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 10px;
+    width: 100%;
+}
+
+.container {
+    width: auto !important;
+    max-width: 95% !important;
+    margin: 10px auto !important;
+    padding: 15px !important;
+    box-sizing: border-box;
+}
+
+#canvasAssinatura {
+    max-width: 100%;
+    height: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+#reader {
+    width: 100% !important;
+    min-height: 250px !important; /* ISSO FAZ A CÂMERA VOLTAR A APARECER */
+    background: #000;
+}
+
+@media (max-width: 600px) {
+    .campo-com-botao { width: 100% !important; }
+    .grid-assinatura { display: flex; flex-direction: column; }
+    .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
