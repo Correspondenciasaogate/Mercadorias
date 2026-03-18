@@ -29,10 +29,10 @@
                         <option value="Way">Torre Way</option>
                     </select>
                 </div>
-                <div id="area-scanner">
-                    <div id="reader"></div>
-                    <button type="button" class="btn-fechar-camera" onclick="pararLeitor()">Fechar Câmera</button>
-                </div>
+                <div id="area-scanner" style="display: none; margin: 10px 0;">
+    <div id="reader" style="width: 100%; min-height: 250px; background: #000;"></div>
+    <button type="button" class="btn-fechar-camera" onclick="pararLeitor()" style="background: #dc2626; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; margin-top: 5px;">Fechar Câmera</button>
+</div>
                 <div class="campo-grupo">
                     <input type="text" id="sala" placeholder="Apto/Sala" required>
                     <input type="text" id="destinatario" placeholder="Nome do Destinatário" required>
