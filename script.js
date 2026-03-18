@@ -735,73 +735,137 @@ function gerarRelatorioAssinaturas() {
     telaImpressao.document.close();
 }
 
-// ================= FUNÇÕES DE MANUTENÇÃO (CORREÇÃO DE DATA DE SAÍDA) =================
+// ================= FUNÇÕES DE MANUTENÇÃO: RELATÓRIO E LIMPEZA (VERSÃO FINAL) =================
 
 function gerarRelatorioAssinaturas() {
-    const campoData = document.getElementById('dataParaLimpar').value; // Ex: 2026-03-18
-    if (!campoData) return alert("Selecione a data no calendário!");
+    const campoData = document.getElementById('dataParaLimpar').value;
+    if (!campoData) {
+        alert("Por favor, selecione a data no calendário primeiro.");
+        return;
+    }
 
-    // Converte 2026-03-18 para 18/03/2026
     const [ano, mes, dia] = campoData.split('-');
     const dataBusca = `${dia}/${mes}/${ano}`;
 
-    // FILTRO: Só pega se o status for 'Retirado' E a data de RETIRADA contiver o dia escolhido
+    // Filtra o que foi RETIRADO no dia escolhido (focando na data de saída)
     const entregues = encomendas.filter(e => 
-        e.status === 'Retirado' && e.dataRetirada && e.dataRetirada.includes(dataBusca)
+        e.status === 'Retirado' && 
+        e.dataRetirada && 
+        e.dataRetirada.includes(dataBusca)
     );
 
     if (entregues.length === 0) {
-        return alert("Nenhuma encomenda foi RETIRADA no dia " + dataBusca);
+        alert("Nenhuma encomenda foi RETIRADA no dia " + dataBusca);
+        return;
     }
 
-    const win = window.open('', '_blank');
-    win.document.write(`
-        <html><head><title>Relatório de Saídas - ${dataBusca}</title>
-        <style>
-            body { font-family: sans-serif; padding: 20px; }
-            .item { border: 1px solid #000; padding: 10px; margin-bottom: 10px; page-break-inside: avoid; }
-            img { height: 120px; border: 1px solid #ccc; display: block; margin-top: 5px; }
-        </style></head><body>
-        <h1>📦 Encomendas Entregues em: ${dataBusca}</h1>
-    `);
-
-    entregues.forEach(e => {
-        win.document.write(`
-            <div class="item">
-                <p><strong>Apto:</strong> ${e.sala} (${e.torre}) | <strong>NF:</strong> ${e.nf}</p>
-                <p><strong>Retirado por:</strong> ${e.quemRetirou}</p>
-                <p><strong>Hora da Saída:</strong> ${e.dataRetirada}</p>
-                <img src="${e.assinatura}">
+    const telaImpressao = window.open('', '_blank');
+    const torres = ["Gate", "Way"]; 
+    
+    let conteudo = `
+        <html>
+        <head>
+            <title>Relatório de Retiradas - ${dataBusca}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; background: #fff; }
+                h1 { text-align: center; color: #059669; border-bottom: 2px solid #059669; padding-bottom: 10px; }
+                h2 { background: #0369a1; color: white; padding: 8px 15px; margin-top: 25px; border-radius: 4px; clear: both; }
+                
+                /* ESTE BLOCO GARANTE AS ASSINATURAS LADO A LADO */
+                .grid { 
+                    display: grid; 
+                    grid-template-columns: 1fr 1fr; /* Duas colunas */
+                    gap: 20px; 
+                    margin-top: 15px; 
+                }
+                
+                .caixa { 
+                    border: 1px solid #333; 
+                    padding: 10px; 
+                    page-break-inside: avoid; 
+                    border-radius: 5px; 
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .img-assinatura { 
+                    width: 100%; 
+                    height: 140px; 
+                    object-fit: contain; 
+                    border-bottom: 1px solid #ccc; 
+                    margin-bottom: 8px; 
+                    background: #f9f9f9; 
+                }
+                
+                .info { font-size: 12px; line-height: 1.4; }
+                .apto { font-weight: bold; font-size: 15px; color: #0369a1; }
+                
+                @media print { .no-print { display: none; } }
+            </style>
+        </head>
+        <body>
+            <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+                <button onclick="window.print()" style="padding: 15px 30px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;">🖨️ IMPRIMIR / SALVAR PDF</button>
             </div>
-        `);
+            <h1>Protocolo de Saídas - ${dataBusca}</h1>
+    `;
+
+    torres.forEach(torre => {
+        const porTorre = entregues.filter(e => e.torre === torre);
+        if (porTorre.length > 0) {
+            conteudo += `<h2>Torre ${torre} (${porTorre.length} entregas)</h2><div class="grid">`;
+            porTorre.forEach(e => {
+                conteudo += `
+                    <div class="caixa">
+                        <img src="${e.assinatura || ''}" class="img-assinatura" alt="Assinatura">
+                        <div class="info">
+                            <div class="apto">Unidade: ${e.sala}</div>
+                            <div><strong>Retirado por:</strong> ${e.quemRetirou || 'Morador'}</div>
+                            <div><strong>Horário da Saída:</strong> ${e.dataRetirada}</div>
+                            <div><strong>NF:</strong> ${e.nf}</div>
+                        </div>
+                    </div>`;
+            });
+            conteudo += `</div>`;
+        }
     });
 
-    win.document.write(`</body></html>`);
-    win.document.close();
+    conteudo += `<p style="text-align:center; margin-top:30px; font-size:10px;">Gerado em ${new Date().toLocaleString()}</p></body></html>`;
+    telaImpressao.document.write(conteudo);
+    telaImpressao.document.close();
 }
 
 function limparPorData() {
     const campoData = document.getElementById('dataParaLimpar').value;
-    if (!campoData) return alert("Selecione a data no calendário!");
+    if (!campoData) {
+        alert("Selecione a data no calendário para apagar.");
+        return;
+    }
 
     const [ano, mes, dia] = campoData.split('-');
     const dataBusca = `${dia}/${mes}/${ano}`;
 
-    const totalAntes = encomendas.length;
+    // Filtra o que será removido (Status Retirado + Data de Saída correta)
+    const paraRemover = encomendas.filter(e => 
+        e.status === 'Retirado' && e.dataRetirada && e.dataRetirada.includes(dataBusca)
+    );
 
-    // A MÁGICA: Mantém na lista tudo o que NÃO foi retirado nessa data específica
-    encomendas = encomendas.filter(e => {
-        const ehRetiradoHoje = e.status === 'Retirado' && e.dataRetirada && e.dataRetirada.includes(dataBusca);
-        
-        // Se foi retirado hoje, retorna FALSE (apaga). Se não, retorna TRUE (fica).
-        return !ehRetiradoHoje;
-    });
+    if (paraRemover.length === 0) {
+        alert("Não existem registros de SAÍDA para apagar nesta data (" + dataBusca + ").");
+        return;
+    }
 
-    if (encomendas.length < totalAntes) {
+    // A CONFIRMAÇÃO QUE VOCÊ PEDIU:
+    const confirmacao = confirm(`⚠️ ATENÇÃO: Você está prestes a APAGAR DEFINITIVAMENTE ${paraRemover.length} registros que foram entregues no dia ${dataBusca}.\n\nVocê já imprimiu ou salvou o relatório?\n\nDeseja continuar com a exclusão?`);
+
+    if (confirmacao) {
+        encomendas = encomendas.filter(e => {
+            const ehSaidaDeHoje = e.status === 'Retirado' && e.dataRetirada && e.dataRetirada.includes(dataBusca);
+            return !ehSaidaDeHoje; // Mantém o que NÃO foi retirado hoje
+        });
+
         salvarEAtualizar();
-        alert("Sucesso! " + (totalAntes - encomendas.length) + " registros de saída do dia " + dataBusca + " foram apagados.");
+        alert("Limpeza concluída com sucesso! Os registros de saída foram removidos.");
         document.getElementById('dataParaLimpar').value = '';
-    } else {
-        alert("Não encontramos registros de RETIRADA para o dia " + dataBusca);
     }
 }
