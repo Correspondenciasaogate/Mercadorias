@@ -772,3 +772,59 @@ function limparPorData() {
         alert("Limpeza concluída com sucesso!");
     }
 }
+
+/* AJUSTES PARA CELULAR (RESPONSIVIDADE) */
+
+/* Faz com que todos os campos e botões não ultrapassem a largura da tela */
+input[type="text"], 
+input[type="date"], 
+select, 
+button {
+    width: 100% !important;   /* Ocupa a largura total disponível */
+    max-width: 100% !important; /* Proíbe de ser maior que a tela */
+    box-sizing: border-box;    /* Inclui bordas no cálculo da largura */
+    margin-bottom: 8px;        /* Espaço entre um campo e outro */
+}
+
+/* Ajusta o grupo de campos (NF + Câmera e Torre) */
+.campo-grupo {
+    display: flex;
+    flex-wrap: wrap; /* Se não couber lado a lado, ele joga para baixo */
+    gap: 10px;
+    width: 100%;
+}
+
+/* Garante que o container principal não "estoure" para os lados */
+.container {
+    width: auto !important;
+    max-width: 95% !important;
+    margin: 10px auto !important;
+    padding: 15px !important;
+    box-sizing: border-box;
+}
+
+/* Ajuste para o Canvas de Assinatura não fugir da tela */
+#canvasAssinatura {
+    max-width: 100%;
+    height: auto; /* Mantém a proporção */
+    background: #fff;
+    border: 1px solid #ccc;
+}
+
+/* Seletor específico para o celular (telas menores que 600px) */
+@media (max-width: 600px) {
+    .campo-com-botao {
+        width: 100% !important;
+    }
+    
+    .grid-assinatura {
+        display: flex;
+        flex-direction: column; /* Coloca a assinatura abaixo do nome no celular */
+    }
+
+    /* Tabela responsiva: permite deslizar para o lado para ver o resto dos dados */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
