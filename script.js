@@ -3,7 +3,8 @@ const CONFIG = {
     ID_CLIENTE: "banco_dados_gate_v1",             
 };
 
-let encomendas = JSON.parse(localStorage.getItem(CONFIG.ID_CLIENTE)) || [];
+// Esta linha tenta ler a pasta nova E a pasta antiga para garantir que nada suma
+let encomendas = JSON.parse(localStorage.getItem(CONFIG.ID_CLIENTE)) || JSON.parse(localStorage.getItem('encomendas')) || [];
 let selecionadaId = null;
 let canvas, ctx, desenhando = false;
 let html5QrCode;
