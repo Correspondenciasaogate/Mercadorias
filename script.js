@@ -429,7 +429,7 @@ function enviarZap(item, tipo) {
     window.open(`https://api.whatsapp.com/send?phone=55${item.telefone.replace(/\D/g, '')}&text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-// SALVAR ENCOMENDA
+// SALVAR ENCOMENDA - CORRIGIDO
 document.getElementById('formRecebimento').addEventListener('submit', function(e) {
     e.preventDefault();
     const idExistente = document.getElementById('editId').value;
@@ -443,14 +443,25 @@ document.getElementById('formRecebimento').addEventListener('submit', function(e
 
     if (idExistente) {
         const index = encomendas.findIndex(enc => enc.id == idExistente);
-        encomendas[index] = { ...encomendas[index], ...dados };
-        cancelarEdicao();
+        if (index !== -1) {
+            encomendas[index] = { ...encomendas[index], ...dados };
+            cancelarEdicao();
+        }
     } else {
-        const nova = { id: Date.now(), ...dados, data: new Date().toLocaleDateString('pt-BR'), status: 'Aguardando retirada', quemRetirou: '', dataRetirada: '', assinatura: '' };
+        const nova = { 
+            id: Date.now(), 
+            ...dados, 
+            data: new Date().toLocaleDateString('pt-BR'), 
+            status: 'Aguardando retirada', 
+            quemRetirou: '', 
+            dataRetirada: '', 
+            assinatura: '' 
+        };
         encomendas.push(nova);
         enviarZap(nova, 'chegada');
     }
-    salvarEAtualizar();
+    
+    salvarEAtualizar(); // Esta linha deve ficar aqui, antes do reset
     this.reset();
     document.getElementById('telefone').style.backgroundColor = "";
 });
