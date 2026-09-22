@@ -518,6 +518,24 @@ function aplicarFiltros() {
         return bateData && bateSala && bateNome && bateNF && bateStatus;
     });
 
+// Ordena os resultados dos detalhes da entrega:
+// 1º Aguardando retirada
+// 2º Retirado
+// Dentro de cada grupo, o mais recente aparece primeiro.
+filtrados.sort((a, b) => {
+
+    // Status primeiro
+    if (a.status !== b.status) {
+        return a.status === "Aguardando retirada" ? -1 : 1;
+    }
+
+    // Depois ordena pela data (mais recente primeiro)
+    const dataA = a.data.split('/').reverse().join('');
+    const dataB = b.data.split('/').reverse().join('');
+
+    return dataB.localeCompare(dataA);
+});
+    
     renderizarTabela(filtrados);
 
     const detalhesDiv = document.getElementById('resultadoConteudo');
