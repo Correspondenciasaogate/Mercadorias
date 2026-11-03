@@ -12,6 +12,7 @@ let html5QrCode;
 // Sua agenda de moradores aqui (Mantida conforme original)
 const agendaMoradores = {
     "Gate002": "11994392466",
+    "Gate003": "11954343508",
     "Gate004": "11958649090",
     "Gate007": "11958649090",
     "Gate101": "11979861261",
